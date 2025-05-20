@@ -1,18 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class EnemyAI : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    [Header("AI Configuration")]
+    [SerializeField] NavMeshAgent agent;
+    [SerializeField] Transform target;
+
+
+
+    private void Awake()
     {
-        
+        target = GameObject.Find("Player").transform;
+        agent = GetComponent<NavMeshAgent>();
     }
 
-    // Update is called once per frame
+
+  
     void Update()
     {
-        
+        agent.SetDestination(target.position);
+        transform.LookAt(target);
     }
 }
