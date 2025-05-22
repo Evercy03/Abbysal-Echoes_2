@@ -25,7 +25,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] float attackRange; // Distancia de ataque.
     [SerializeField] bool targetInSightRange; // Determina si el target esta a distancia de detección.
     [SerializeField] bool targetInAttacktRange; // Determina si el target esta a distancia de ataque.
-                                                // Referencias privadas (get component)
+                                               
     private Animator anim;
 
 
@@ -33,7 +33,6 @@ public class EnemyAI : MonoBehaviour
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        target = GameObject.Find("Player").transform;
         anim = GetComponent<Animator>();
     }
 
@@ -122,6 +121,7 @@ public class EnemyAI : MonoBehaviour
              //Añade un intervalo entre ataques.
             alredyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
+           
         }
     }
 
