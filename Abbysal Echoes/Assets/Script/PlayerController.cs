@@ -4,38 +4,74 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private float playerSpeed = 5.0f;
     [SerializeField] private float rotationSpeed = 4f;
-    [SerializeField] private float playerSpeed = 2.0f;
-    [SerializeField] private float gravityValue = -9.81f;
+
     private Transform cameraFollowTransform;
     private Rigidbody rb;
     private Vector2 moveInput;
+    private float verticalInput;
+    private Animator animator;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; 
+        rb.useGravity = false;
+        rb.freezeRotation = true;
         cameraFollowTransform = Camera.main.transform;
+        animator = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
     {
-        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
-        move = cameraFollowTransform.forward * move.z + cameraFollowTransform.right * move.x;
-        move.y = 0;
+        // Movimiento relativo a la cámara
+        Vector3 horizontalMove = cameraFollowTransform.forward * moveInput.y + cameraFollowTransform.right * moveInput.x;
+        Vector3 verticalMove = Vector3.up * verticalInput;
 
-        rb.velocity = new Vector3(move.x * playerSpeed, rb.velocity.y + gravityValue * Time.fixedDeltaTime, move.z * playerSpeed);
+        Vector3 moveDirection = (horizontalMove + verticalMove).normalized;
 
-        if (moveInput != Vector2.zero)
+        rb.MovePosition(rb.position + moveDirection * playerSpeed * Time.fixedDeltaTime);
+
+        // Rotación horizontal (solo eje Y)
+        if (moveDirection != Vector3.zero)
         {
-            float targetAngle = Mathf.Atan2(moveInput.x, moveInput.y) * Mathf.Rad2Deg + cameraFollowTransform.eulerAngles.y;
-            Quaternion rotation = Quaternion.Euler(0f, targetAngle, 0);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.fixedDeltaTime * rotationSpeed);
+            Vector3 flatDirection = new Vector3(moveDirection.x, 0f, moveDirection.z);
+            if (flatDirection != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(flatDirection);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.fixedDeltaTime * rotationSpeed);
+            }
+        }
+
+        // Animación
+        bool isMoving = moveInput.magnitude > 0.1f || Mathf.Abs(verticalInput) > 0.1f;
+        animator.SetBool("IsMoving", isMoving);
+
+        // Inclinación hacia adelante cuando está nadando
+        if (isMoving)
+        {
+            Quaternion tilt = Quaternion.Euler(80f, transform.rotation.eulerAngles.y, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, tilt, Time.fixedDeltaTime * 5f);
+        }
+        else
+        {
+            Quaternion upright = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, upright, Time.fixedDeltaTime * 5f);
         }
     }
 
+    // Movimiento horizontal (WASD o stick izquierdo)
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
     }
+
+    // Movimiento vertical (subir y bajar)
+    public void OnVertical(InputAction.CallbackContext context)
+    {
+        verticalInput = context.ReadValue<float>();
+    }
+
+
+
 }
