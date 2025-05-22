@@ -20,32 +20,36 @@ public class EnemyAI : MonoBehaviour
     public float timeBetweenAttacks; // Tiempo de espera entre ataques.
     private bool alredyAttacked; // Determina si ya ha atacado.
 
+    // Variables para ataques a distancia:
+    [SerializeField] GameObject projectile; // Referencia de la bala física.
+    [SerializeField] Transform shootPoint; // Punto desde donde se genera la bala.
+    [SerializeField] float shootSpeedZ; // velocidad frontal de la bala.
+    [SerializeField] float shootSpeedY; // Velocidad vertical de la bala (solo si le afecta la gravedad).
+
     [Header("States & Detection")]
     [SerializeField] float sightRange; // Distancia de detección del target de la IA.
     [SerializeField] float attackRange; // Distancia de ataque.
     [SerializeField] bool targetInSightRange; // Determina si el target esta a distancia de detección.
     [SerializeField] bool targetInAttacktRange; // Determina si el target esta a distancia de ataque.
-                                               
-    private Animator anim;
-
-
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
+        target = GameObject.Find("Player").transform;
     }
 
     private void Update()
     {
         EnemyStateUpdater();
+        targetInSightRange = Physics.CheckSphere(transform.position, sightRange, targetLayer);
+        ChaseTarget();
     }
 
     void EnemyStateUpdater()
     {
         // Revisar si el target esta en los rangos de detección y/o ataque:
-        targetInSightRange = Physics.CheckSphere(transform.position, sightRange, targetLayer);
-        targetInAttacktRange = Physics.CheckSphere(transform.position, attackRange, targetLayer);
+        
+        //targetInAttacktRange = Physics.CheckSphere(transform.position, attackRange, targetLayer);
 
         // Cambios dinámicos de estado de la IA:
         // Orden de prioridades: ataque > persecución > patrulla.
@@ -53,14 +57,14 @@ public class EnemyAI : MonoBehaviour
         {
             Patroling();
         }
-        if (targetInSightRange && !targetInAttacktRange)
+        if (targetInSightRange)
         {
             ChaseTarget();
         }
-        if (targetInSightRange && targetInAttacktRange)
+       /* if (targetInSightRange && targetInAttacktRange)
         {
             AttackTarget();
-        }
+        }*/
     }
 
     void Patroling()
@@ -102,6 +106,7 @@ public class EnemyAI : MonoBehaviour
     void ChaseTarget()
     {
         agent.SetDestination(target.position);
+        Debug.Log("Chasing");
     }
 
     void AttackTarget()
@@ -110,18 +115,15 @@ public class EnemyAI : MonoBehaviour
         agent.SetDestination(transform.position); // Evita que se mueva.
         transform.LookAt(target);
 
-        anim.SetTrigger("Attack");
-
         if (!alredyAttacked)
         {
-           // Rigidbody rb = Instantiate(projectile, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody>();
-           //rb.AddForce(transform.forward * shootSpeedZ, ForceMode.Impulse);
+            Rigidbody rb = Instantiate(projectile, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody>();
+            rb.AddForce(transform.forward * shootSpeedZ, ForceMode.Impulse);
             //rb.AddForce(transform.up * shootSpeedY, ForceMode.Impulse); // Solo si le afecta la gravedad.
 
-             //Añade un intervalo entre ataques.
+            // Añade un intervalo entre ataques.
             alredyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
-           
         }
     }
 
