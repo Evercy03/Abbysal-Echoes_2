@@ -226,6 +226,13 @@ public class EnemyAI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Projectile"))
+        {
+            Die(); // llama a la función que ya tienes
+        }
+    }
 
     // Función para que los Gizmos de detección (perseguir/ataque) se dibujen en la escena al seleccionar el objeto.
     private void OnDrawGizmosSelected()
