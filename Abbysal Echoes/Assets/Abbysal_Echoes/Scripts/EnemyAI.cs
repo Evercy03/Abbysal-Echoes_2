@@ -146,7 +146,7 @@ public class EnemyAI : MonoBehaviour
     void ChaseTarget()
     {
         agent.SetDestination(target.position);
-        Debug.Log("Chasing");
+        Debug.Log("Chasing Target pos: " + target.position + " | Agent pos: " + transform.position);
         animator.Play("Enemy_Swimming_Bake_003");
         if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
         {
