@@ -20,32 +20,66 @@ public class EnemyAI : MonoBehaviour
     public float timeBetweenAttacks; // Tiempo de espera entre ataques.
     private bool alredyAttacked; // Determina si ya ha atacado.
 
+    // Variables para ataques a distancia:
+    [SerializeField] GameObject projectile; // Referencia de la bala física.
+    [SerializeField] Transform shootPoint; // Punto desde donde se genera la bala.
+    [SerializeField] float shootSpeedZ; // velocidad frontal de la bala.
+    [SerializeField] float shootSpeedY; // Velocidad vertical de la bala (solo si le afecta la gravedad).
+
     [Header("States & Detection")]
     [SerializeField] float sightRange; // Distancia de detección del target de la IA.
     [SerializeField] float attackRange; // Distancia de ataque.
     [SerializeField] bool targetInSightRange; // Determina si el target esta a distancia de detección.
     [SerializeField] bool targetInAttacktRange; // Determina si el target esta a distancia de ataque.
-                                               
-    private Animator anim;
 
+    [Header("Animations")]
+    private Animator animator;
+    private bool isDead = false;
 
+    [SerializeField] private float health = 100f;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
-    }
+       // agent.updateRotation = false;
+        target = GameObject.Find("Player").transform;
+        animator = GetComponent<Animator>();
 
+
+        /* Rigidbody rb = GetComponent<Rigidbody>();
+         if (rb != null)
+         {
+             rb.freezeRotation = true;
+             rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+             // Si solo quieres congelar X:
+             // rb.constraints = RigidbodyConstraints.FreezeRotationX;
+         }*/
+    }
+    private void LateUpdate()
+    {
+        transform.rotation = Quaternion.Euler(-89.98f, 0f, 0f);
+    }
     private void Update()
     {
+        if (isDead) return;
+
         EnemyStateUpdater();
+        targetInSightRange = Physics.CheckSphere(transform.position, sightRange, targetLayer);
+        ChaseTarget();
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            Debug.Log("Nadando...");
+        }
     }
 
     void EnemyStateUpdater()
     {
+        
+        
         // Revisar si el target esta en los rangos de detección y/o ataque:
-        targetInSightRange = Physics.CheckSphere(transform.position, sightRange, targetLayer);
-        targetInAttacktRange = Physics.CheckSphere(transform.position, attackRange, targetLayer);
+        
+        //targetInAttacktRange = Physics.CheckSphere(transform.position, attackRange, targetLayer);
 
         // Cambios dinámicos de estado de la IA:
         // Orden de prioridades: ataque > persecución > patrulla.
@@ -53,18 +87,25 @@ public class EnemyAI : MonoBehaviour
         {
             Patroling();
         }
-        if (targetInSightRange && !targetInAttacktRange)
+        if (targetInSightRange)
         {
             ChaseTarget();
         }
-        if (targetInSightRange && targetInAttacktRange)
+       /* if (targetInSightRange && targetInAttacktRange)
         {
             AttackTarget();
-        }
+        }*/
     }
 
     void Patroling()
     {
+
+        animator.SetBool("IsAttacking", false);
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            animator.SetTrigger("Swim");
+        }
+
         if (!walkPointSet)
         {
             // Genera un punto de caminado nuevo:
@@ -81,6 +122,9 @@ public class EnemyAI : MonoBehaviour
         {
             walkPointSet = false;
         }
+
+        animator.Play("Enemy_Swimming_Bake_003");
+
     }
 
     void SearchWalkPoint()
@@ -102,6 +146,13 @@ public class EnemyAI : MonoBehaviour
     void ChaseTarget()
     {
         agent.SetDestination(target.position);
+        Debug.Log("Chasing");
+        animator.Play("Enemy_Swimming_Bake_003");
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            animator.SetTrigger("Swim");
+        }
+
     }
 
     void AttackTarget()
@@ -110,18 +161,18 @@ public class EnemyAI : MonoBehaviour
         agent.SetDestination(transform.position); // Evita que se mueva.
         transform.LookAt(target);
 
-        anim.SetTrigger("Attack");
+        animator.SetBool("IsAttacking", true);
+        animator.Play("Enemy_Attack_Bake");
 
         if (!alredyAttacked)
         {
-           // Rigidbody rb = Instantiate(projectile, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody>();
-           //rb.AddForce(transform.forward * shootSpeedZ, ForceMode.Impulse);
+            Rigidbody rb = Instantiate(projectile, shootPoint.position, Quaternion.identity).GetComponent<Rigidbody>();
+            rb.AddForce(transform.forward * shootSpeedZ, ForceMode.Impulse);
             //rb.AddForce(transform.up * shootSpeedY, ForceMode.Impulse); // Solo si le afecta la gravedad.
 
-             //Añade un intervalo entre ataques.
+            // Añade un intervalo entre ataques.
             alredyAttacked = true;
             Invoke(nameof(ResetAttack), timeBetweenAttacks);
-           
         }
     }
 
@@ -129,6 +180,35 @@ public class EnemyAI : MonoBehaviour
     {
         alredyAttacked = false;
     }
+
+    public void TakeDamage( float damage)
+    {
+        {
+            animator.SetTrigger("TakeHit");
+            animator.Play("Enemy_Hit_Bake");
+
+            health -= damage;
+
+            if (health <= 0 && !isDead)
+            {
+                Die();
+            }
+        }
+    }
+
+    void Die()
+    {
+        animator.SetTrigger("Die");
+        animator.Play("Enemy_Death_Bake");
+        isDead = true;
+        agent.isStopped = true;
+        Invoke(nameof(DeactivateEnemy), 3f);
+    }
+    void DeactivateEnemy()
+    {
+        gameObject.SetActive(false);
+    }
+
 
     // Función para que los Gizmos de detección (perseguir/ataque) se dibujen en la escena al seleccionar el objeto.
     private void OnDrawGizmosSelected()
