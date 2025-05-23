@@ -66,6 +66,11 @@ public class EnemyAI : MonoBehaviour
         EnemyStateUpdater();
         targetInSightRange = Physics.CheckSphere(transform.position, sightRange, targetLayer);
         ChaseTarget();
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            Debug.Log("Nadando...");
+        }
     }
 
     void EnemyStateUpdater()
@@ -96,6 +101,10 @@ public class EnemyAI : MonoBehaviour
     {
 
         animator.SetBool("IsAttacking", false);
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            animator.SetTrigger("Swim");
+        }
 
         if (!walkPointSet)
         {
@@ -139,6 +148,11 @@ public class EnemyAI : MonoBehaviour
         agent.SetDestination(target.position);
         Debug.Log("Chasing");
         animator.Play("Enemy_Swimming_Bake_003");
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            animator.SetTrigger("Swim");
+        }
+
     }
 
     void AttackTarget()
