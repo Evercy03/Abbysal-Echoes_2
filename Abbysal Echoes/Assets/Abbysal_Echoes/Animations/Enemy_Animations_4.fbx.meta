@@ -65,7 +65,7 @@ ModelImporter:
       name: Enemy_Swimming_Bake_003
       takeName: Enemy_Swimming_Bake_003
       internalID: 4894000413408402564
-      firstFrame: 15
+      firstFrame: 8
       lastFrame: 39
       wrapMode: 0
       orientationOffsetY: 0
