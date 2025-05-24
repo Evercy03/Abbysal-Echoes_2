@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour
     private float verticalInput;
     private Animator animator;
 
+    public GameObject projectilePrefab;
+    public Transform handPosition;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -62,6 +65,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void ShootProjectile()
+    {
+        Instantiate(projectilePrefab, handPosition.position, handPosition.rotation);
+        // También puedes añadir animaciones o sonidos aquí
+    }
+
     // Movimiento horizontal (WASD o stick izquierdo)
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -74,6 +83,15 @@ public class PlayerController : MonoBehaviour
         verticalInput = context.ReadValue<float>();
     }
 
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            // Aquí va el ataque (ej. lanzar proyectil)
+            Debug.Log("¡Ataque realizado!");
+            ShootProjectile(); // Llama a tu método de ataque
+        }
+    }
 
 
 }
