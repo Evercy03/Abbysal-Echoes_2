@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -163,7 +164,7 @@ public class EnemyAI : MonoBehaviour
     void ChaseTarget()
     {
         agent.SetDestination(target.position);
-        Debug.Log("Chasing Target pos: " + target.position + " | Agent pos: " + transform.position);
+       // Debug.Log("Chasing Target pos: " + target.position + " | Agent pos: " + transform.position);
         animator.Play("Enemy_Swimming_Bake_003");
         if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
         {
@@ -245,8 +246,13 @@ public class EnemyAI : MonoBehaviour
             Destroy(collision.gameObject);
             Destroy(gameObject);
         }
-
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            SceneManager.LoadScene(3);
+        }
     }
+
+
 
     // Función para que los Gizmos de detección (perseguir/ataque) se dibujen en la escena al seleccionar el objeto.
     private void OnDrawGizmosSelected()

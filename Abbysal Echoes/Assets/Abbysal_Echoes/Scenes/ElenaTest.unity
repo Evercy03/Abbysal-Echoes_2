@@ -1119,7 +1119,6 @@ MonoBehaviour:
   targetInSightRange: 0
   targetInAttacktRange: 0
   enemyBody: {fileID: 0}
-  health: 100
 --- !u!65 &1023485265
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1525,10 +1524,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 4.8275557
-  m_Height: 9.655111
+  m_Radius: 5.6777363
+  m_Height: 13.579441
   m_Direction: 1
-  m_Center: {x: -3.6839466, y: 2.2282724, z: 0.2511549}
+  m_Center: {x: -0.18969154, y: 3.3048306, z: -1.4818544}
 --- !u!1 &1360601932 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -8961359253771211100, guid: 00d089f59a6b5414bb9fd0eb1ade51f6,
@@ -2106,7 +2105,7 @@ PrefabInstance:
     - target: {fileID: 1385132254520403765, guid: 8679ab828335cec4b9cf3d9d6b0b428b,
         type: 3}
       propertyPath: m_Name
-      value: Enemy_Animations_4
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 1385132254520403765, guid: 8679ab828335cec4b9cf3d9d6b0b428b,
         type: 3}
@@ -2116,7 +2115,7 @@ PrefabInstance:
     - target: {fileID: 1761799015544896911, guid: 8679ab828335cec4b9cf3d9d6b0b428b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -38.25
+      value: -38.46
       objectReference: {fileID: 0}
     - target: {fileID: 1761799015544896911, guid: 8679ab828335cec4b9cf3d9d6b0b428b,
         type: 3}
