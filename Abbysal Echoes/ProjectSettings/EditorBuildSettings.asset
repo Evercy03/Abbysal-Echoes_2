@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Abbysal_Echoes/Scenes/MainMenu.unity
+    guid: 754eadad543e11b40ba1cabde299e3b5
+  - enabled: 1
     path: Assets/Abbysal_Echoes/Scenes/EvaTest.unity
     guid: 550f40bb85a36ba4285b753235002919
   - enabled: 1
