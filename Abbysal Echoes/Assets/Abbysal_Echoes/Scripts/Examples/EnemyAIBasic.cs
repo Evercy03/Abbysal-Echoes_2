@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI; // Libreria para usar clases de NavMesh.
+using UnityEngine.AI;
 
-public class EnemyAIBasic : MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
     [Header("AI Configuration")]
     [SerializeField] NavMeshAgent agent; // Componente que permite al objeto tener IA.
@@ -32,22 +32,66 @@ public class EnemyAIBasic : MonoBehaviour
     [SerializeField] bool targetInSightRange; // Determina si el target esta a distancia de detección.
     [SerializeField] bool targetInAttacktRange; // Determina si el target esta a distancia de ataque.
 
+    [Header("Animations")]
+    private Animator animator;
+    private bool isDead = false;
+
+    [SerializeField] private float health = 100f;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        //agent.updateRotation = false;
         target = GameObject.Find("Player").transform;
-    }
+        animator = GetComponent<Animator>();
 
+
+        /* Rigidbody rb = GetComponent<Rigidbody>();
+         if (rb != null)
+         {
+             rb.freezeRotation = true;
+             rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+             // Si solo quieres congelar X:
+             // rb.constraints = RigidbodyConstraints.FreezeRotationX;
+         }*/
+
+        if (animator == null)
+        {
+            Debug.LogError("No se encontró un Animator en " + gameObject.name + " o sus hijos.");
+        }
+
+    }
+    private void LateUpdate()
+    {
+       // transform.rotation = Quaternion.Euler(-89.98f, 0f, 0f);
+        /*Vector3 direction = agent.velocity.normalized;
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }*/
+    }
     private void Update()
     {
+        if (isDead) return;
+
         EnemyStateUpdater();
+        targetInSightRange = Physics.CheckSphere(transform.position, sightRange, targetLayer);
+        ChaseTarget();
+
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            Debug.Log("Nadando...");
+        }
     }
 
     void EnemyStateUpdater()
     {
+
+
         // Revisar si el target esta en los rangos de detección y/o ataque:
-        targetInSightRange = Physics.CheckSphere(transform.position, sightRange, targetLayer);
-        targetInAttacktRange = Physics.CheckSphere(transform.position, attackRange, targetLayer);
+
+        //targetInAttacktRange = Physics.CheckSphere(transform.position, attackRange, targetLayer);
 
         // Cambios dinámicos de estado de la IA:
         // Orden de prioridades: ataque > persecución > patrulla.
@@ -55,18 +99,25 @@ public class EnemyAIBasic : MonoBehaviour
         {
             Patroling();
         }
-        if (targetInSightRange && !targetInAttacktRange)
+        if (targetInSightRange)
         {
             ChaseTarget();
         }
-        if (targetInSightRange && targetInAttacktRange)
-        {
-            AttackTarget();
-        }
+        /* if (targetInSightRange && targetInAttacktRange)
+         {
+             AttackTarget();
+         }*/
     }
 
     void Patroling()
     {
+
+        //animator.SetBool("IsAttacking", false);
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            animator.SetTrigger("Swim");
+        }
+
         if (!walkPointSet)
         {
             // Genera un punto de caminado nuevo:
@@ -83,6 +134,9 @@ public class EnemyAIBasic : MonoBehaviour
         {
             walkPointSet = false;
         }
+
+        animator.Play("Enemy_Swimming_Bake_003");
+
     }
 
     void SearchWalkPoint()
@@ -95,7 +149,12 @@ public class EnemyAIBasic : MonoBehaviour
         walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
 
         // Comprobación de si el nuevo punto de caminado es válido:
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, groundLayer))
+        /*if (Physics.Raycast(walkPoint, -transform.up, 2f, groundLayer))
+        {
+            walkPointSet = true;
+        }*/
+
+        if (Physics.Raycast(walkPoint + Vector3.up * 5f, Vector3.down, 10f, groundLayer))
         {
             walkPointSet = true;
         }
@@ -104,6 +163,13 @@ public class EnemyAIBasic : MonoBehaviour
     void ChaseTarget()
     {
         agent.SetDestination(target.position);
+        Debug.Log("Chasing Target pos: " + target.position + " | Agent pos: " + transform.position);
+        animator.Play("Enemy_Swimming_Bake_003");
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Enemy_Swimming_Bake_003"))
+        {
+            animator.SetTrigger("Swim");
+        }
+
     }
 
     void AttackTarget()
@@ -111,6 +177,9 @@ public class EnemyAIBasic : MonoBehaviour
         // Antes de atacar...:
         agent.SetDestination(transform.position); // Evita que se mueva.
         transform.LookAt(target);
+
+        animator.SetBool("IsAttacking", true);
+        animator.Play("Enemy_Attack_Bake");
 
         if (!alredyAttacked)
         {
@@ -127,6 +196,42 @@ public class EnemyAIBasic : MonoBehaviour
     void ResetAttack()
     {
         alredyAttacked = false;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        {
+            animator.SetTrigger("TakeHit");
+            animator.Play("Enemy_Hit_Bake");
+
+            health -= damage;
+
+            if (health <= 0 && !isDead)
+            {
+                Die();
+            }
+        }
+    }
+
+    void Die()
+    {
+        animator.SetTrigger("Die");
+        animator.Play("Enemy_Death_Bake");
+        isDead = true;
+        agent.isStopped = true;
+        Invoke(nameof(DeactivateEnemy), 3f);
+    }
+    void DeactivateEnemy()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Projectile"))
+        {
+            Die(); // llama a la función que ya tienes
+        }
     }
 
     // Función para que los Gizmos de detección (perseguir/ataque) se dibujen en la escena al seleccionar el objeto.
