@@ -33,6 +33,8 @@ public class Boss : MonoBehaviour
     [SerializeField] bool targetInSightRange; // Determina si el target esta a distancia de detección.
     [SerializeField] bool targetInAttacktRange; // Determina si el target esta a distancia de ataque.
 
+    private int hitCount = 0;
+    public int maxHits = 5;
 
     [SerializeField] GameObject enemyBody;
     [Header("Animations")]
@@ -176,7 +178,7 @@ public class Boss : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider collision)
+    /*private void OnTriggerEnter(Collider collision)
     {
         Debug.Log("Colisión detectada con:" + collision.gameObject.name);
 
@@ -187,6 +189,26 @@ public class Boss : MonoBehaviour
             Destroy(gameObject);
         }
 
+    }*/
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        Debug.Log("Colisión detectada con: " + collision.gameObject.name);
+
+        if (collision.gameObject.CompareTag("Projectile"))
+        {
+            hitCount++;
+            Debug.Log("Impactos recibidos: " + hitCount);
+
+            if (hitCount >= maxHits)
+            {
+                Debug.Log("¡Boss derrotado!");
+                Destroy(gameObject); // Destruye al enemigo
+            }
+
+            // Si quieres que el proyectil desaparezca al golpear:
+            // Destroy(collision.gameObject);
+        }
     }
 
     // Función para que los Gizmos de detección (perseguir/ataque) se dibujen en la escena al seleccionar el objeto.
