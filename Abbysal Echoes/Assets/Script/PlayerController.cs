@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
         rb.freezeRotation = true;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
         cameraFollowTransform = Camera.main.transform;
         animator = GetComponent<Animator>();
     }
