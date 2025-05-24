@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
@@ -71,6 +72,15 @@ public class PlayerController : MonoBehaviour
         // También puedes añadir animaciones o sonidos aquí
     }
 
+   /* private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            SceneManager.LoadScene(3);
+            Debug.Log("Habrías cambiado de escena");
+        }
+    }*/
+    #region
     // Movimiento horizontal (WASD o stick izquierdo)
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -92,6 +102,6 @@ public class PlayerController : MonoBehaviour
             ShootProjectile(); // Llama a tu método de ataque
         }
     }
-
+    #endregion
 
 }

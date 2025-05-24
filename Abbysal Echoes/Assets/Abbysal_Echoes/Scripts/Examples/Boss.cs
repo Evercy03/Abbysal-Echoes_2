@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using static UnityEngine.UI.Image;
 
 public class Boss : MonoBehaviour
@@ -221,6 +222,14 @@ public class Boss : MonoBehaviour
         // Dibuja el rango de persecución:
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, sightRange);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            SceneManager.LoadScene(3);
+        }
     }
 }
 
