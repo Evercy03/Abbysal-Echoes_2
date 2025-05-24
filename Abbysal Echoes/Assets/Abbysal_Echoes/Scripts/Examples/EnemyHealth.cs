@@ -28,22 +28,40 @@ public class EnemyHealth : MonoBehaviour
     {
         if (currentHealth <= 0)
         {
-            currentHealth = 0;
+            
             deathEffect.SetActive(true);
             deathEffect.transform.position = transform.position;
             gameObject.SetActive(false);
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int amount)
     {
-        currentHealth -= damage;
-        enemyRend.material = damagedMat;
-        Invoke(nameof(ResetDamageMeterial), 0.2f);
+        currentHealth -= amount;
+        Debug.Log("Daño recibido: " + amount + " | Vida restante: " + currentHealth);
+
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
-    private void ResetDamageMeterial()
+        void Die()
+    {
+        Debug.Log("¡Enemigo eliminado!");
+        if (deathEffect != null)
+        {
+            Instantiate(deathEffect, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
+    }
+
+    private void ResetDamageMaterial()
     {
         enemyRend.material = baseMat;
     }
 }
+
+
+

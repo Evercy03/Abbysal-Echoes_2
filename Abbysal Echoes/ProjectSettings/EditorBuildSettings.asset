@@ -6,6 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Abbysal_Echoes/Scenes/EvaTest.unity
+    guid: 550f40bb85a36ba4285b753235002919
+  - enabled: 1
+    path: Assets/Abbysal_Echoes/Scenes/ElenaTest.unity
+    guid: 93cac7d2e96889644a9fda3010f69386
+  - enabled: 1
+    path: Assets/Abbysal_Echoes/Scenes/WinScene.unity
+    guid: 90bb094fa39bb04408652db872f2771c
+  - enabled: 1
+    path: Assets/Abbysal_Echoes/Scenes/LoseScene.unity
+    guid: b1f45203878b2e442a4851821ea8537a
   m_configObjects: {}

@@ -6,13 +6,14 @@ public class Projectile : MonoBehaviour
 {
   
     public float speed = 20f;
-    public int damage = 25;
+    public int amount = 25;
     public float lifeTime = 3f;
     public LayerMask enemyLayer;
 
     void Start()
     {
         Destroy(gameObject, lifeTime); // destruir tras un tiempo
+
     }
 
     void Update()
@@ -27,7 +28,7 @@ public class Projectile : MonoBehaviour
             EnemyHealth enemy = other.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
-                enemy.TakeDamage(damage);
+                enemy.TakeDamage(amount);
             }
             Destroy(gameObject); // destruir proyectil tras impactar
         }

@@ -5,40 +5,38 @@ using UnityEngine.SceneManagement;
 
 public class SceneChanger : MonoBehaviour
 {
-    private bool gameEnded = false;
+    [Header("Escenas")]
+    public string sceneOnTriggerEnter = "ElenaTest";  // Escena que se carga al tocar el trigger
+    public string sceneOnBossDeath;     // Escena que se carga al matar al boss
+    public PlayerHealth playerHealth;
+
+    [Header("Configuración")]
+    public string bossTag = "Boss";     // Tag que debe tener el boss
+    public string playerTag = "Player"; // Tag del jugador
+
+    private bool bossDefeated = false;
 
     void Update()
     {
-        if (!gameEnded)
+        // Verifica constantemente si el boss ha sido destruido
+        if (!bossDefeated && GameObject.FindGameObjectWithTag(bossTag) == null)
         {
-            CheckBossDeath();
+            bossDefeated = true;
+            Debug.Log("Boss derrotado, cambiando a escena: " + sceneOnBossDeath);
+            SceneManager.LoadScene(sceneOnBossDeath);
+        }
+        if (playerHealth != null && playerHealth.playerHealth <= 0)
+        {
+            SceneManager.LoadScene("LoseScene");
         }
     }
 
-    // Este método debe ser llamado desde el script que controle la muerte del jugador
-    public void OnPlayerDeath()
+    private void OnTriggerEnter(Collider other)
     {
-        if (!gameEnded)
+        if (other.CompareTag(playerTag))
         {
-            gameEnded = true;
-            LoadScene("You Loose");
+            Debug.Log("Jugador entró al trigger, cargando escena: " + sceneOnTriggerEnter);
+            SceneManager.LoadScene(sceneOnTriggerEnter);
         }
-    }
-
-    void CheckBossDeath()
-    {
-        GameObject boss = GameObject.FindGameObjectWithTag("Boss");
-
-        if (boss == null)
-        {
-            gameEnded = true;
-            LoadScene("You Win");
-        }
-    }
-
-    void LoadScene(string sceneName)
-    {
-        Debug.Log("Cambiando a escena: " + sceneName);
-        SceneManager.LoadScene(sceneName);
     }
 }

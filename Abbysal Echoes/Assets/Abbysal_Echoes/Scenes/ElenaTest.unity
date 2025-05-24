@@ -2098,6 +2098,11 @@ PrefabInstance:
       propertyPath: sightRange
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 752628005651087127, guid: 8679ab828335cec4b9cf3d9d6b0b428b,
+        type: 3}
+      propertyPath: attackRange
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 1385132254520403765, guid: 8679ab828335cec4b9cf3d9d6b0b428b,
         type: 3}
       propertyPath: m_Name

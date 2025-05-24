@@ -38,8 +38,6 @@ public class EnemyAI : MonoBehaviour
     private Animator animator;
     private bool isDead = false;
 
-    [SerializeField] private float health = 100f;
-
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
