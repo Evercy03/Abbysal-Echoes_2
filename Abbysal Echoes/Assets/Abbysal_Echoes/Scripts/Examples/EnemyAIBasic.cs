@@ -32,6 +32,8 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] bool targetInSightRange; // Determina si el target esta a distancia de detección.
     [SerializeField] bool targetInAttacktRange; // Determina si el target esta a distancia de ataque.
 
+
+    [SerializeField] GameObject enemyBody;
     [Header("Animations")]
     private Animator animator;
     private bool isDead = false;
@@ -198,7 +200,7 @@ public class EnemyAI : MonoBehaviour
         alredyAttacked = false;
     }
 
-    public void TakeDamage(float damage)
+    /*public void TakeDamage(float damage)
     {
         {
             animator.SetTrigger("TakeHit");
@@ -208,30 +210,44 @@ public class EnemyAI : MonoBehaviour
 
             if (health <= 0 && !isDead)
             {
-                Die();
+                //Die();
             }
         }
-    }
+    }*/
 
-    void Die()
-    {
-        animator.SetTrigger("Die");
-        animator.Play("Enemy_Death_Bake");
-        isDead = true;
-        agent.isStopped = true;
-        Invoke(nameof(DeactivateEnemy), 3f);
-    }
-    void DeactivateEnemy()
-    {
-        gameObject.SetActive(false);
-    }
 
-    private void OnTriggerEnter(Collider other)
+    /* void Die()
+     {
+        /* animator.SetTrigger("Die");
+         animator.Play("Enemy_Death_Bake");
+         isDead = true;
+         agent.isStopped = true;*/
+    /*  Invoke(nameof(DeactivateEnemy), 3f);
+  }
+  void DeactivateEnemy()
+  {
+      gameObject.SetActive(false);
+  }*/
+
+    /* private void OnTriggerEnter(Collider other)
+     {
+         if (other.gameObject.CompareTag("Projectile"))
+         {
+             Die(); // llama a la función que ya tienes
+         }
+     }*/
+
+  private void OnTriggerEnter(Collider collision)
     {
-        if (other.gameObject.CompareTag("Projectile"))
+        Debug.Log("Colisión detectada con: " + collision.gameObject.name);
+
+        if (collision.gameObject.CompareTag("Projectile"))
         {
-            Die(); // llama a la función que ya tienes
+            Debug.Log("¡Impacto con proyectil!");
+            Destroy(collision.gameObject);
+            Destroy(gameObject);
         }
+
     }
 
     // Función para que los Gizmos de detección (perseguir/ataque) se dibujen en la escena al seleccionar el objeto.

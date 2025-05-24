@@ -189,6 +189,34 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "GamePlay",
+            "id": "a822fcfd-a150-4db7-8339-0dd6d65852b6",
+            "actions": [
+                {
+                    "name": "Attack",
+                    "type": "Value",
+                    "id": "55b2b55d-cd30-498a-b552-2730b2de62cd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "ee223df6-0214-43b9-8c3c-b71086f5a16c",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
