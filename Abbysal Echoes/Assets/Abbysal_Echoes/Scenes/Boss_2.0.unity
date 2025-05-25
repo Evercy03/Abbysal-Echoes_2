@@ -769,6 +769,58 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &414787140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 414787142}
+  - component: {fileID: 414787141}
+  m_Layer: 0
+  m_Name: SceneChanger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &414787141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414787140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7800623a3fd3514b9b329a87da25717, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneOnTriggerEnter: ElenaTest
+  sceneOnBossDeath: WinScene
+  sceneOnPlayerDeath: LoseScene
+  playerHealth: {fileID: 0}
+  bossTag: Boss
+  playerTag: Player
+  gameSceneName: NombreDeTuPrimeraEscena
+  creditsSceneName: CreditsScene
+--- !u!4 &414787142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 414787140}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 33.44547, y: 493.2223, z: -976.8585}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &450058223 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e6cd176ff7aeffe4a906be2d0cfba42f,
@@ -853,8 +905,8 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   maxHits: 5
   enemyBody: {fileID: 450058223}
---- !u!136 &450058228
-CapsuleCollider:
+--- !u!65 &450058230
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -871,11 +923,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 6.322281
-  m_Height: 12.644562
-  m_Direction: 1
-  m_Center: {x: -2.2119315e-13, y: 0, z: -0.96142644}
+  serializedVersion: 3
+  m_Size: {x: 7.00746, y: 2.1818383, z: 20.663599}
+  m_Center: {x: -0.1075496, y: 4.638388, z: -2.7720177}
 --- !u!1 &615869904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1258,7 +1308,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: e6cd176ff7aeffe4a906be2d0cfba42f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 468.99277
+      value: 470.40002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e6cd176ff7aeffe4a906be2d0cfba42f,
         type: 3}
@@ -1373,7 +1423,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: e6cd176ff7aeffe4a906be2d0cfba42f,
         type: 3}
       propertyPath: m_TagString
-      value: Enemy
+      value: Boss
       objectReference: {fileID: 0}
     - target: {fileID: 1300807451701807120, guid: e6cd176ff7aeffe4a906be2d0cfba42f,
         type: 3}
@@ -1454,7 +1504,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e6cd176ff7aeffe4a906be2d0cfba42f,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 450058228}
+      addedObject: {fileID: 450058230}
   m_SourcePrefab: {fileID: 100100000, guid: e6cd176ff7aeffe4a906be2d0cfba42f, type: 3}
 --- !u!1001 &896903147
 PrefabInstance:
@@ -1967,6 +2017,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4729562446261606389, guid: cde1eed1ce05df648b2c99a9297c3677,
+        type: 3}
+      propertyPath: playerSpeed
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5079250209250713531, guid: cde1eed1ce05df648b2c99a9297c3677,
         type: 3}
@@ -3365,3 +3420,4 @@ SceneRoots:
   - {fileID: 1981681660}
   - {fileID: 896903147}
   - {fileID: 199526673}
+  - {fileID: 414787142}
