@@ -34,6 +34,7 @@ public class Boss : MonoBehaviour
     [SerializeField] bool targetInSightRange; // Determina si el target esta a distancia de detección.
     [SerializeField] bool targetInAttacktRange; // Determina si el target esta a distancia de ataque.
 
+    [SerializeField] LifeBar healthBar;
     private int hitCount = 0;
     public int maxHits = 5;
 
@@ -50,6 +51,7 @@ public class Boss : MonoBehaviour
         //agent.updateRotation = false;
         target = GameObject.Find("Player").transform;
         animator = GetComponent<Animator>();
+        
 
 
         if (animator == null)
@@ -57,6 +59,12 @@ public class Boss : MonoBehaviour
             Debug.LogError("No se encontró un Animator en " + gameObject.name + " o sus hijos.");
         }
 
+    }
+
+    private void Start()
+    {
+        healthBar = GetComponentInChildren<LifeBar>();
+        healthBar.UpdateHealthBar(hitCount, maxHits);
     }
     private void LateUpdate()
     {
@@ -201,12 +209,14 @@ public class Boss : MonoBehaviour
             hitCount++;
             Debug.Log("Impactos recibidos: " + hitCount);
 
+
             if (hitCount >= maxHits)
             {
                 Debug.Log("¡Boss derrotado!");
                 Destroy(gameObject); // Destruye al enemigo
             }
 
+            healthBar.UpdateHealthBar(hitCount, maxHits);
             // Si quieres que el proyectil desaparezca al golpear:
             // Destroy(collision.gameObject);
         }

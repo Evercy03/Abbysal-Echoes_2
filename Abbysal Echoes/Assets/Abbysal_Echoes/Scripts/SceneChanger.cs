@@ -8,6 +8,7 @@ public class SceneChanger : MonoBehaviour
     [Header("Escenas")]
     public string sceneOnTriggerEnter = "ElenaTest";  // Escena que se carga al tocar el trigger
     public string sceneOnBossDeath;     // Escena que se carga al matar al boss
+    public string sceneOnPlayerDeath;
     public PlayerHealth playerHealth;
 
     [Header("Configuración")]
@@ -23,7 +24,18 @@ public class SceneChanger : MonoBehaviour
 
     private GameObject boss;
     private bool bossWasFound = false;
-    
+
+
+    void Start()
+    {
+        if (GameState.playerDied)
+        {
+            Debug.Log("Entramos a la LoseScene por muerte del jugador, no evaluamos más.");
+            this.enabled = false;  
+            
+        }
+    }
+
 
     public void PlayGame()
     {
@@ -41,19 +53,26 @@ public class SceneChanger : MonoBehaviour
 #endif
     }
 
-    public void LoadCredits()
-    {
-        Debug.Log("Cargando créditos...");
-        SceneManager.LoadScene(creditsSceneName);
-    }
+
 
     void Update()
     {
-        // Verifica constantemente si el boss ha sido destruido
-        if (SceneManager.GetActiveScene().name == "MainMenuScene")
+        if (SceneManager.GetActiveScene().name == sceneOnPlayerDeath) return;
+
+        if (SceneManager.GetActiveScene().name == "MainMenu")
             return;
 
-        // Buscar al boss solo una vez
+        // 1. Primero revisa si el jugador murió
+        if (playerHealth != null && playerHealth.playerHealth <= 0)
+        {
+            GameState.playerDied = true;
+            Debug.Log("Jugador ha muerto. Cargando escena de derrota.");
+            SceneManager.LoadScene(sceneOnPlayerDeath);
+            return;
+
+        }
+
+        // 2. Solo entonces revisa si el boss fue derrotado
         if (!bossWasFound)
         {
             boss = GameObject.FindGameObjectWithTag(bossTag);
@@ -63,21 +82,18 @@ public class SceneChanger : MonoBehaviour
             }
         }
 
-        // Si ya fue encontrado y ahora está destruido
         if (bossWasFound && !bossDefeated && boss == null)
         {
             bossDefeated = true;
             Debug.Log("Boss derrotado, cambiando a escena: " + sceneOnBossDeath);
             SceneManager.LoadScene(sceneOnBossDeath);
         }
-
-        // Comprobar muerte del jugador
-        if (playerHealth != null && playerHealth.playerHealth <= 0)
-        {
-            SceneManager.LoadScene("LoseScene");
-        }
     }
 
+    public static class GameState
+    {
+        public static bool playerDied = false;
+    }
 
 
     private void OnTriggerEnter(Collider other)
